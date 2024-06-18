@@ -1,14 +1,13 @@
 import {useState} from 'react';
 import {SideNavItem, Icon} from '@vaadin/react-components';
 import ParentMenuItem from "Frontend/generated/pl/npesystem/services/tables/ParentMenuItem";
-import {useSignal} from "@vaadin/hilla-react-signals";
 
-export const ParentMenuItemWithCollapse = ({parentMenuItem}: {parentMenuItem: ParentMenuItem}) => {
+export default function ParentMenuItemWithCollapse({parentMenuItem}: {parentMenuItem: ParentMenuItem}) {
 	const [isOpen, setIsOpen] = useState(false);
 	const toggleIsOpen = () => setIsOpen(!isOpen);
 
 	return (
-		<div>
+		<>
 			<SideNavItem onClick={toggleIsOpen}>
 				{isOpen ? <Icon icon="angle-down" /> : <Icon icon="angle-right" />}
 				{parentMenuItem.label}
@@ -18,6 +17,6 @@ export const ParentMenuItemWithCollapse = ({parentMenuItem}: {parentMenuItem: Pa
 					{childMenuItem.label}
 				</SideNavItem>
 			)}
-		</div>
+		</>
 	);
 };
