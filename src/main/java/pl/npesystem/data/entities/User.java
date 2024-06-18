@@ -17,7 +17,7 @@ import java.util.Set;
         title = "Użytkownicy"
 )
 public class User extends AbstractEntity {
-    static final String clazzId = "1";
+    public static final String clazzId = "1";
 
     private String username;
     private String name;

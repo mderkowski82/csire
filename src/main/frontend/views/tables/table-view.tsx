@@ -3,7 +3,7 @@ import {useSignal} from '@vaadin/hilla-react-signals';
 import {Button} from '@vaadin/react-components/Button.js';
 import {Notification} from '@vaadin/react-components/Notification.js';
 import {TextField} from '@vaadin/react-components/TextField.js';
-import {FuckedPropEndpoint, HelloWorldService} from 'Frontend/generated/endpoints.js';
+import {FuckedPropEndpoint} from 'Frontend/generated/endpoints.js';
 
 export const config: ViewConfig = {
 	menu: {order: 66, icon: 'line-awesome/svg/globe-solid.svg'},
