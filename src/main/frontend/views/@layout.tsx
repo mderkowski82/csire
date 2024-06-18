@@ -26,7 +26,7 @@ export default function MainLayout() {
 
     const { state, logout } = useAuth();
     const profilePictureUrl =
-        state.user &&
+        state.user && state.user.profilePicture &&
         `data:image;base64,${btoa(
             state.user.profilePicture.reduce((str, n) => str + String.fromCharCode((n + 256) % 256), ''),
         )}`;

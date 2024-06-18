@@ -1,14 +1,23 @@
-package pl.npesystem.data;
+package pl.npesystem.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Type;
+import pl.npesystem.annotations.FuckedProp;
+import pl.npesystem.data.AbstractEntity;
+import pl.npesystem.data.Role;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "application_user")
+@FuckedProp(
+        clazz = User.clazzId,
+        view = {Role.USER, Role.ADMIN},
+        edit = {Role.USER, Role.ADMIN},
+        title = "Użytkownicy"
+)
 public class User extends AbstractEntity {
+    static final String clazzId = "1";
 
     private String username;
     private String name;

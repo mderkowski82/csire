@@ -5,7 +5,7 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.hilla.Endpoint;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.npesystem.data.User;
+import pl.npesystem.data.entities.User;
 import pl.npesystem.services.security.AuthenticatedUser;
 
 @Endpoint
