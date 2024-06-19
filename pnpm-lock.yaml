@@ -13,7 +13,7 @@ importers:
         version: 3.5.1
       '@vaadin/bundles':
         specifier: 24.4.0
-        version: 24.4.0(36fl7ehcpkgplax77frgsh2dey)
+        version: 24.4.0(@polymer/polymer@3.5.1)(@vaadin/a11y-base@24.4.0)(@vaadin/accordion@24.4.0)(@vaadin/app-layout@24.4.0)(@vaadin/avatar-group@24.4.0)(@vaadin/avatar@24.4.0)(@vaadin/board@24.4.0)(@vaadin/button@24.4.0)(@vaadin/charts@24.4.0)(@vaadin/checkbox-group@24.4.0)(@vaadin/checkbox@24.4.0)(@vaadin/combo-box@24.4.0)(@vaadin/component-base@24.4.0)(@vaadin/confirm-dialog@24.4.0)(@vaadin/context-menu@24.4.0)(@vaadin/cookie-consent@24.4.0)(@vaadin/crud@24.4.0)(@vaadin/custom-field@24.4.0)(@vaadin/date-picker@24.4.0)(@vaadin/date-time-picker@24.4.0)(@vaadin/details@24.4.0)(@vaadin/dialog@24.4.0)(@vaadin/email-field@24.4.0)(@vaadin/field-base@24.4.0)(@vaadin/field-highlighter@24.4.0)(@vaadin/form-layout@24.4.0)(@vaadin/grid-pro@24.4.0)(@vaadin/grid@24.4.0)(@vaadin/horizontal-layout@24.4.0)(@vaadin/icon@24.4.0)(@vaadin/icons@24.4.0)(@vaadin/input-container@24.4.0)(@vaadin/integer-field@24.4.0)(@vaadin/item@24.4.0)(@vaadin/list-box@24.4.0)(@vaadin/lit-renderer@24.4.0)(@vaadin/login@24.4.0)(@vaadin/map@24.4.0)(@vaadin/menu-bar@24.4.0)(@vaadin/message-input@24.4.0)(@vaadin/message-list@24.4.0)(@vaadin/multi-select-combo-box@24.4.0)(@vaadin/notification@24.4.0)(@vaadin/number-field@24.4.0)(@vaadin/overlay@24.4.0)(@vaadin/password-field@24.4.0)(@vaadin/polymer-legacy-adapter@24.4.0)(@vaadin/progress-bar@24.4.0)(@vaadin/radio-group@24.4.0)(@vaadin/rich-text-editor@24.4.0)(@vaadin/scroller@24.4.0)(@vaadin/select@24.4.0)(@vaadin/side-nav@24.4.0)(@vaadin/split-layout@24.4.0)(@vaadin/tabs@24.4.0)(@vaadin/tabsheet@24.4.0)(@vaadin/text-area@24.4.0)(@vaadin/text-field@24.4.0)(@vaadin/time-picker@24.4.0)(@vaadin/tooltip@24.4.0)(@vaadin/upload@24.4.0)(@vaadin/vaadin-development-mode-detector@2.0.7)(@vaadin/vaadin-lumo-styles@24.4.0)(@vaadin/vaadin-themable-mixin@24.4.0)(@vaadin/vaadin-usage-statistics@2.1.2)(@vaadin/vertical-layout@24.4.0)(@vaadin/virtual-list@24.4.0)(cookieconsent@3.1.1)(highcharts@9.2.2)(lit@3.1.4)(ol@6.13.0)(quickselect@2.0.0)(rbush@3.0.1)
       '@vaadin/common-frontend':
         specifier: 0.0.19
         version: 0.0.19(lit@3.1.4)
@@ -77,6 +77,9 @@ importers:
       lit:
         specifier: 3.1.4
         version: 3.1.4
+      lucide-react:
+        specifier: ^0.395.0
+        version: 0.395.0(react@18.3.1)
       proj4:
         specifier: 2.11.0
         version: 2.11.0
@@ -2573,6 +2576,11 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
+  lucide-react@0.395.0:
+    resolution: {integrity: sha512-6hzdNH5723A4FLaYZWpK50iyZH8iS2Jq5zuPRRotOFkhu6kxxJiebVdJ72tCR5XkiIeYFOU5NUawFZOac+VeYw==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0
+
   magic-string@0.23.2:
     resolution: {integrity: sha512-oIUZaAxbcxYIp4AyLafV6OVKoB3YouZs0UTCJ8mOKBHNyJgGDaMJ4TgA+VylJh6fx7EQCC52XkbURxxG9IoJXA==}
 
@@ -4665,8 +4673,8 @@ snapshots:
       '@vaadin/a11y-base': 24.4.0
       '@vaadin/component-base': 24.4.0
 
-  '@vaadin/bundles@24.4.0(36fl7ehcpkgplax77frgsh2dey)':
-    optionalDependencies:
+  ? '@vaadin/bundles@24.4.0(@polymer/polymer@3.5.1)(@vaadin/a11y-base@24.4.0)(@vaadin/accordion@24.4.0)(@vaadin/app-layout@24.4.0)(@vaadin/avatar-group@24.4.0)(@vaadin/avatar@24.4.0)(@vaadin/board@24.4.0)(@vaadin/button@24.4.0)(@vaadin/charts@24.4.0)(@vaadin/checkbox-group@24.4.0)(@vaadin/checkbox@24.4.0)(@vaadin/combo-box@24.4.0)(@vaadin/component-base@24.4.0)(@vaadin/confirm-dialog@24.4.0)(@vaadin/context-menu@24.4.0)(@vaadin/cookie-consent@24.4.0)(@vaadin/crud@24.4.0)(@vaadin/custom-field@24.4.0)(@vaadin/date-picker@24.4.0)(@vaadin/date-time-picker@24.4.0)(@vaadin/details@24.4.0)(@vaadin/dialog@24.4.0)(@vaadin/email-field@24.4.0)(@vaadin/field-base@24.4.0)(@vaadin/field-highlighter@24.4.0)(@vaadin/form-layout@24.4.0)(@vaadin/grid-pro@24.4.0)(@vaadin/grid@24.4.0)(@vaadin/horizontal-layout@24.4.0)(@vaadin/icon@24.4.0)(@vaadin/icons@24.4.0)(@vaadin/input-container@24.4.0)(@vaadin/integer-field@24.4.0)(@vaadin/item@24.4.0)(@vaadin/list-box@24.4.0)(@vaadin/lit-renderer@24.4.0)(@vaadin/login@24.4.0)(@vaadin/map@24.4.0)(@vaadin/menu-bar@24.4.0)(@vaadin/message-input@24.4.0)(@vaadin/message-list@24.4.0)(@vaadin/multi-select-combo-box@24.4.0)(@vaadin/notification@24.4.0)(@vaadin/number-field@24.4.0)(@vaadin/overlay@24.4.0)(@vaadin/password-field@24.4.0)(@vaadin/polymer-legacy-adapter@24.4.0)(@vaadin/progress-bar@24.4.0)(@vaadin/radio-group@24.4.0)(@vaadin/rich-text-editor@24.4.0)(@vaadin/scroller@24.4.0)(@vaadin/select@24.4.0)(@vaadin/side-nav@24.4.0)(@vaadin/split-layout@24.4.0)(@vaadin/tabs@24.4.0)(@vaadin/tabsheet@24.4.0)(@vaadin/text-area@24.4.0)(@vaadin/text-field@24.4.0)(@vaadin/time-picker@24.4.0)(@vaadin/tooltip@24.4.0)(@vaadin/upload@24.4.0)(@vaadin/vaadin-development-mode-detector@2.0.7)(@vaadin/vaadin-lumo-styles@24.4.0)(@vaadin/vaadin-themable-mixin@24.4.0)(@vaadin/vaadin-usage-statistics@2.1.2)(@vaadin/vertical-layout@24.4.0)(@vaadin/virtual-list@24.4.0)(cookieconsent@3.1.1)(highcharts@9.2.2)(lit@3.1.4)(ol@6.13.0)(quickselect@2.0.0)(rbush@3.0.1)'
+  : optionalDependencies:
       '@polymer/polymer': 3.5.1
       '@vaadin/a11y-base': 24.4.0
       '@vaadin/accordion': 24.4.0
@@ -6450,6 +6458,10 @@ snapshots:
   lru-cache@5.1.1:
     dependencies:
       yallist: 3.1.1
+
+  lucide-react@0.395.0(react@18.3.1):
+    dependencies:
+      react: 18.3.1
 
   magic-string@0.23.2:
     dependencies:
