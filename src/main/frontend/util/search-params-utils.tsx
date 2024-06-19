@@ -1,4 +1,5 @@
-import JSZip from 'jszip';
+import pako from 'pako';
+
 
 
 export function getSearchParam(searchParam: string): Record<string, string> {
@@ -11,18 +12,21 @@ export function getSearchParam(searchParam: string): Record<string, string> {
 }
 
 
-function compressToZip(data: Record<string, any>): Promise<string> {
-	const zip = new JSZip();
-	zip.file('data.json', JSON.stringify(data));
-	return zip.generateAsync({ type: 'base64' });
+
+export function compressData(data: Record<string, any>): string {
+	const jsonString = JSON.stringify(data);
+	const compressed = pako.gzip(jsonString);
+	return btoa(String.fromCharCode.apply(null, compressed as unknown as number[]));
 }
 
-async function decompressFromZip(base64Data: string): Promise<Record<string, any>> {
-	const zip = await JSZip.loadAsync(base64Data, { base64: true });
-	const jsonData = await zip.file('data.json')?.async('text');
-	if(jsonData) {
-		return JSON.parse(jsonData);
-	} else {
+export function decompressData(compressedData: string): Record<string, any> {
+	try {
+		const binaryString = window.atob(compressedData);
+		const binaryChar = [...binaryString].map((char) => char.charCodeAt(0));
+		const decompressed = pako.ungzip(new Uint8Array(binaryChar), { to: 'string' });
+		return JSON.parse(decompressed);
+	} catch (e) {
 		return {}
 	}
+
 }

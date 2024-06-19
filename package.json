@@ -4,6 +4,7 @@
   "type": "module",
   "dependencies": {
     "@polymer/polymer": "3.5.1",
+    "@types/pako": "^2.0.3",
     "@vaadin/bundles": "24.4.0",
     "@vaadin/common-frontend": "0.0.19",
     "@vaadin/hilla-file-router": "24.4.0",
@@ -121,7 +122,7 @@
       "workbox-core": "7.1.0",
       "workbox-precaching": "7.1.0"
     },
-    "hash": "5310098128e191e964c3d9df2a8f85f359ffe532a7416d84a33a17ba10775485"
+    "hash": "2a397da4f57f26b9b88090e122e82d3dfc7a7d11f862dff235e72560f534f708"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",
@@ -162,6 +163,8 @@
     "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
     "@vaadin/vaadin-lumo-styles": "$@vaadin/vaadin-lumo-styles",
     "@vaadin/vaadin-material-styles": "$@vaadin/vaadin-material-styles",
-    "lucide-react": "$lucide-react"
+    "lucide-react": "$lucide-react",
+    "jszip": "$jszip",
+    "@types/pako": "$@types/pako"
   }
 }

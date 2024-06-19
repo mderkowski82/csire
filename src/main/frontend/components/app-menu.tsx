@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
-import ParentMenuItem from "Frontend/generated/pl/npesystem/services/tables/ParentMenuItem";
 import {MenuEndpoint} from "Frontend/generated/endpoints";
 import ParentMenuItemWithCollapse from "Frontend/components/parent-item-with-collapse";
+import ParentMenuItem from "Frontend/generated/pl/npesystem/services/records/ParentMenuItem";
 
 
 export default function AppMenu() {

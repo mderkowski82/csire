@@ -4,23 +4,31 @@ import {Button} from '@vaadin/react-components/Button.js';
 import {Notification} from '@vaadin/react-components/Notification.js';
 import {TextField} from '@vaadin/react-components/TextField.js';
 import {FuckedPropEndpoint} from 'Frontend/generated/endpoints.js';
-import {useParams} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import FuckedPropInfo from "Frontend/generated/pl/npesystem/services/records/FuckedPropInfo";
 import {useEffect, useState} from "react";
 import {useAuth} from "Frontend/util/auth";
-import {getSearchParam} from "Frontend/util/search-params-utils";
+import {compressData, decompressData} from "Frontend/util/search-params-utils";
 
 export const config: ViewConfig = {
 	menu: {order: 66, icon: 'line-awesome/svg/globe-solid.svg'},
 	title: 'Table',
 };
 
+export type TableData = {
+	page: number,
+	pageSize: number,
+	sortedBy: string,
+	sortedDirection: "asc" | "desc"
+};
+
 export default function TableView() {
 	const [fuckedPropInfo,setFuckedPropInfo] = useState<FuckedPropInfo>();
 	const { clazz } = useParams();
 	const {state, logout} = useAuth();
+	const [searchParams, setSearchParams] = useSearchParams();
+	const compressedData = searchParams.get('table');
 
-	const searchParam = getSearchParam(window.location.search);
 
 
 
@@ -29,6 +37,20 @@ export default function TableView() {
 			FuckedPropEndpoint.getFuckedPropInfoByClazzId(clazz).then(response => {
 				if(response) setFuckedPropInfo(response);
 			})
+		}
+		if(compressedData) {
+			console.log(decompressData(compressedData));
+
+		} else {
+			const json:TableData = {
+				page: 1,
+				pageSize:50,
+				sortedBy:'id',
+				sortedDirection: "asc"
+			}
+			searchParams.set('table', compressData(json));
+			setSearchParams(searchParams);
+
 		}
 	}, []);
 
@@ -51,7 +73,10 @@ export default function TableView() {
 					{JSON.stringify(fuckedPropInfo, null, 2)}
 				</pre>
 				<pre>
-					{JSON.stringify(searchParam, null, 2)}
+					{JSON.stringify(compressedData, null, 2)}
+				</pre>
+				<pre>
+					{compressedData && JSON.stringify(decompressData(compressedData), null, 2)}
 				</pre>
 			</section>
 		</>
