@@ -16,7 +16,7 @@ export default function ParentMenuItemWithCollapse({parentMenuItem}: { parentMen
 				</HorizontalLayout>
 			</SideNavItem>
 			{isOpen && parentMenuItem.childs?.map(childMenuItem =>
-				<SideNavItem path={`entity/${parentMenuItem.position}/${childMenuItem.position}`} key={childMenuItem.position}>
+				<SideNavItem path={`entity/${childMenuItem.entity.clazz}`} key={childMenuItem.position}>
 					{childMenuItem.label}
 				</SideNavItem>
 			)}
