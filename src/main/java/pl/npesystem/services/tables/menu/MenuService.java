@@ -1,7 +1,9 @@
-package pl.npesystem.services.tables;
+package pl.npesystem.services.tables.menu;
 
 import org.springframework.stereotype.Service;
 import pl.npesystem.data.entities.User;
+import pl.npesystem.services.records.ChildMenuItem;
+import pl.npesystem.services.records.ParentMenuItem;
 import pl.npesystem.services.utils.ReflectionUtils;
 
 import java.util.List;

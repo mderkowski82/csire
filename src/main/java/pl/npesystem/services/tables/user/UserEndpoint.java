@@ -1,4 +1,4 @@
-package pl.npesystem.services;
+package pl.npesystem.services.tables.user;
 
 
 import com.vaadin.flow.server.auth.AnonymousAllowed;

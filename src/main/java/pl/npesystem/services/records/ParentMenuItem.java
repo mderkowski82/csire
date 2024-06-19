@@ -1,4 +1,4 @@
-package pl.npesystem.services.tables;
+package pl.npesystem.services.records;
 
 import com.vaadin.hilla.Nonnull;
 

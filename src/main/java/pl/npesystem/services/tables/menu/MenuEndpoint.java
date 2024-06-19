@@ -1,8 +1,9 @@
-package pl.npesystem.services.tables;
+package pl.npesystem.services.tables.menu;
 
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.hilla.Endpoint;
 import com.vaadin.hilla.Nonnull;
+import pl.npesystem.services.records.ParentMenuItem;
 
 import java.util.List;
 

@@ -25,6 +25,7 @@
     "@vaadin/vaadin-usage-statistics": "2.1.2",
     "construct-style-sheets-polyfill": "3.1.0",
     "date-fns": "2.29.3",
+    "jszip": "^3.10.1",
     "lit": "3.1.4",
     "lucide-react": "^0.395.0",
     "proj4": "2.11.0",
@@ -120,7 +121,7 @@
       "workbox-core": "7.1.0",
       "workbox-precaching": "7.1.0"
     },
-    "hash": "7a428636ffb7e38b43a0bd5add0831d99048733b1d35d3374fbdc0621ec0f545"
+    "hash": "5310098128e191e964c3d9df2a8f85f359ffe532a7416d84a33a17ba10775485"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",
