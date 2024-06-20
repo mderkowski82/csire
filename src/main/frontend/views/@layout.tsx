@@ -5,7 +5,7 @@ import React, {Suspense, useEffect} from 'react';
 import {Link, Outlet, useLocation, useNavigate} from 'react-router-dom';
 import {useAuth} from "Frontend/util/auth";
 import {Button} from "@vaadin/react-components/Button.js";
-import AppMenu from "Frontend/components/app-menu";
+import AppMenu from "Frontend/components/menu/app-menu";
 
 const defaultTitle = document.title;
 const documentTitleSignal = signal('');

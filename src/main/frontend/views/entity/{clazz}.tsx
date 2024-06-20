@@ -50,9 +50,8 @@ export default function TableView() {
 			}
 			searchParams.set('table', compressData(json));
 			setSearchParams(searchParams);
-
 		}
-	}, []);
+	}, [clazz]);
 
 
 	const userRoles = state.user?.roles;

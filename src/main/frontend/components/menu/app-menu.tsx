@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {MenuEndpoint} from "Frontend/generated/endpoints";
-import ParentMenuItemWithCollapse from "Frontend/components/parent-item-with-collapse";
+import ParentMenuItemWithCollapse from "Frontend/components/menu/parent-item-with-collapse";
 import ParentMenuItem from "Frontend/generated/pl/npesystem/services/records/ParentMenuItem";
 
 
