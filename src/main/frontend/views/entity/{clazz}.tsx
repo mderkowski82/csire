@@ -1,26 +1,21 @@
 import {ViewConfig} from '@vaadin/hilla-file-router/types.js';
-import {useSignal} from '@vaadin/hilla-react-signals';
-import {Button} from '@vaadin/react-components/Button.js';
-import {Notification} from '@vaadin/react-components/Notification.js';
-import {TextField} from '@vaadin/react-components/TextField.js';
-import {FuckedPropEndpoint} from 'Frontend/generated/endpoints.js';
+import {FuckedPropEndpoint, TableDataProviderEndpoint} from 'Frontend/generated/endpoints.js';
 import {useParams, useSearchParams} from "react-router-dom";
-import FuckedPropInfo from "Frontend/generated/pl/npesystem/services/records/FuckedPropInfo";
 import {useEffect, useState} from "react";
 import {useAuth} from "Frontend/util/auth";
 import {compressData, decompressData} from "Frontend/util/search-params-utils";
+import {TableData} from "Frontend/types/table/types";
+import Direction from "Frontend/generated/pl/npesystem/models/dto/FilterRequestDTO/Direction";
+import FuckedPropInfo from "Frontend/generated/pl/npesystem/models/records/FuckedPropInfo";
+import LogicOperator from "Frontend/generated/pl/npesystem/models/dto/FilterRequestDTO/LogicOperator";
+import Operation from "Frontend/generated/pl/npesystem/models/dto/FilterRequestDTO/Operation";
 
 export const config: ViewConfig = {
 	menu: {order: 66, icon: 'line-awesome/svg/globe-solid.svg'},
 	title: 'Table',
 };
 
-export type TableData = {
-	page: number,
-	pageSize: number,
-	sortedBy: string,
-	sortedDirection: "asc" | "desc"
-};
+
 
 export default function TableView() {
 	const [fuckedPropInfo,setFuckedPropInfo] = useState<FuckedPropInfo>();
@@ -40,17 +35,39 @@ export default function TableView() {
 		}
 		if(compressedData) {
 			console.log(decompressData(compressedData));
-
 		} else {
 			const json:TableData = {
 				page: 1,
 				pageSize:50,
 				sortedBy:'id',
-				sortedDirection: "asc"
+				sortedDirection: "asc",
+				clazz: clazz ?? ""
 			}
 			searchParams.set('table', compressData(json));
 			setSearchParams(searchParams);
 		}
+
+		TableDataProviderEndpoint.getTableDataFiltered({
+			entityName:"aa",
+			pageRequest:{
+				page: 1,
+				size: 10,
+				sort: {
+					direction: Direction.ASC,
+					property: "id"
+				}
+			},
+			filters: [
+				{
+					fieldName: "name",
+					logicOperator: LogicOperator.AND,
+					values: [],
+					operation: Operation.LIKE,
+					wildcard:"orma"
+				}
+			]
+		}).then(value => console.log(value));
+
 	}, [clazz]);
 
 

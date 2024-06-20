@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {HorizontalLayout, SideNavItem} from '@vaadin/react-components';
 import {ChevronDown, ChevronUp} from "lucide-react";
-import ParentMenuItem from "Frontend/generated/pl/npesystem/services/records/ParentMenuItem";
+import ParentMenuItem from "Frontend/generated/pl/npesystem/models/records/ParentMenuItem";
 
 export default function ParentMenuItemWithCollapse({parentMenuItem}: { parentMenuItem: ParentMenuItem }) {
 	const [isOpen, setIsOpen] = useState(false);

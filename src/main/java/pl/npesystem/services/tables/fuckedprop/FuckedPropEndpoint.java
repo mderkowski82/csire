@@ -3,7 +3,7 @@ package pl.npesystem.services.tables.fuckedprop;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.hilla.Endpoint;
 import com.vaadin.hilla.Nonnull;
-import pl.npesystem.services.records.FuckedPropInfo;
+import pl.npesystem.models.records.FuckedPropInfo;
 
 import java.util.Optional;
 import java.util.Set;

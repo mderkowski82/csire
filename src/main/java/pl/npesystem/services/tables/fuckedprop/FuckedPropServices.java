@@ -1,7 +1,7 @@
 package pl.npesystem.services.tables.fuckedprop;
 
 import org.springframework.stereotype.Service;
-import pl.npesystem.services.records.FuckedPropInfo;
+import pl.npesystem.models.records.FuckedPropInfo;
 import pl.npesystem.services.utils.ReflectionUtils;
 
 import java.util.Optional;

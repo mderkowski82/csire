@@ -3,7 +3,7 @@ package pl.npesystem.services.utils;
 import org.reflections.Reflections;
 import pl.npesystem.annotations.FuckedProp;
 import pl.npesystem.data.AbstractEntity;
-import pl.npesystem.services.records.FuckedPropInfo;
+import pl.npesystem.models.records.FuckedPropInfo;
 
 import java.util.Set;
 import java.util.stream.Collectors;
