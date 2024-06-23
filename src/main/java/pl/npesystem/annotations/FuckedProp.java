@@ -17,5 +17,9 @@ public @interface FuckedProp {
 
     Role[] edit() default {};
 
+    Role[] delete() default {};
+
     String title();
+
+    String[] defaultColumn();
 }

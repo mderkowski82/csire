@@ -2,6 +2,7 @@ package pl.npesystem.services.tables.menu;
 
 import org.springframework.stereotype.Service;
 import pl.npesystem.data.entities.Brand;
+import pl.npesystem.data.entities.TestEntity;
 import pl.npesystem.data.entities.User;
 import pl.npesystem.models.records.ChildMenuItem;
 import pl.npesystem.models.records.ParentMenuItem;
@@ -16,6 +17,13 @@ public class MenuService {
         return List.of(
                 new ParentMenuItem(
                         1,
+                        "TEST",
+                        List.of(
+                                new ChildMenuItem(1L, "TEST", ReflectionUtils.toFuckedPropInfo(TestEntity.class))
+                        )
+                ),
+                new ParentMenuItem(
+                        2,
                         "Encje",
                         List.of(
                                 new ChildMenuItem(1L, "Użytkownicy", ReflectionUtils.toFuckedPropInfo(User.class)),
@@ -24,7 +32,7 @@ public class MenuService {
                         )
                 ),
                 new ParentMenuItem(
-                        2,
+                        3,
                         "Encje 2",
                         List.of(
                                 new ChildMenuItem(1L, "Użytkownicy x", ReflectionUtils.toFuckedPropInfo(User.class)),

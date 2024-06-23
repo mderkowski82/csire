@@ -12,7 +12,8 @@ import pl.npesystem.data.Role;
         clazz = Brand.clazzId,
         view = {Role.USER, Role.ADMIN},
         edit = {Role.USER, Role.ADMIN},
-        title = "Brand"
+        title = "Brand",
+        defaultColumn = {}
 )
 public class Brand extends AbstractEntity {
     public static final String clazzId = "2";

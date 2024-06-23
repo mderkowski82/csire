@@ -1,4 +1,7 @@
 package pl.npesystem.models.records;
 
-public record FuckedPropInfo(String clazz, pl.npesystem.data.Role[] view, pl.npesystem.data.Role[] edit, String title) {
+import pl.npesystem.data.Role;
+
+public record FuckedPropInfo(String clazz, Role[] view, Role[] edit, Role[] delete, String title,
+                             String[] defaultColumn) {
 }
