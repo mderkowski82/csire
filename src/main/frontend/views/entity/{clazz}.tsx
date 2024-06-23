@@ -19,6 +19,7 @@ export const config: ViewConfig = {
 
 export default function TableView() {
 	const [fuckedPropInfo,setFuckedPropInfo] = useState<FuckedPropInfo>();
+	const [fetchData,setFetchData] = useState<FuckedPropInfo>();
 	const { clazz } = useParams();
 	const {state, logout} = useAuth();
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -61,12 +62,12 @@ export default function TableView() {
 				{
 					fieldName: "name",
 					logicOperator: LogicOperator.AND,
-					values: [],
-					operation: Operation.LIKE,
-					wildcard:"orma"
+					values: ["Emma Executive"],
+					operation: Operation.EQUALS,
+					wildcard: ""
 				}
 			]
-		}).then(value => console.log(value));
+		}).then(value => setFetchData(value ?? ""));
 
 	}, [clazz]);
 
@@ -89,7 +90,7 @@ export default function TableView() {
 					{JSON.stringify(fuckedPropInfo, null, 2)}
 				</pre>
 				<pre>
-					{JSON.stringify(compressedData, null, 2)}
+					{JSON.stringify(fetchData, null, 2)}
 				</pre>
 				<pre>
 					{compressedData && JSON.stringify(decompressData(compressedData), null, 2)}

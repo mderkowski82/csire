@@ -27,9 +27,9 @@ public class DataFilterService {
         for (FilterRequestDTO.FilterCriteriaDTO filter : filterRequest.getFilters()) {
             Path<Object> path = root.get(filter.getFieldName());
             if (filter.getOperation().equals(FilterRequestDTO.Operation.EQUALS)) {
-                predicates.add(cb.equal(path, filter.getValues().get(0)));
+                predicates.add(cb.equal(cb.lower(path.as(String.class)), filter.getValues().get(0).toString().toLowerCase()));
             } else if (filter.getOperation().equals(FilterRequestDTO.Operation.NOT_EQUALS)) {
-                predicates.add(cb.notEqual(path, filter.getValues().get(0)));
+                predicates.add(cb.notEqual(cb.lower(path.as(String.class)), filter.getValues().get(0).toString().toLowerCase()));
             } else if (filter.getOperation().equals(FilterRequestDTO.Operation.GREATER_THAN)) {
                 predicates.add(cb.greaterThan(path.<Comparable>get(filter.getFieldName()), Comparable.class.cast(filter.getValues().get(0))));
             } else if (filter.getOperation().equals(FilterRequestDTO.Operation.LESS_THAN)) {
@@ -51,10 +51,9 @@ public class DataFilterService {
             } else if (filter.getOperation().equals(FilterRequestDTO.Operation.NOT_NULL)) {
                 predicates.add(cb.isNotNull(path));
             } else if (filter.getOperation().equals(FilterRequestDTO.Operation.LIKE)) {
-                predicates.add(cb.like(path.as(String.class), "%%%s%%".formatted(filter.getWildcard())));
+                predicates.add(cb.like(cb.lower(path.as(String.class)), "%%%s%%".formatted(filter.getWildcard().toLowerCase())));
             } else if (filter.getOperation().equals(FilterRequestDTO.Operation.NOT_LIKE)) {
-                predicates.add(cb.notLike(path.as(String.class), filter.getWildcard()));
-            }
+                predicates.add(cb.notLike(cb.lower(path.as(String.class)), filter.getWildcard().toLowerCase()));            }
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
