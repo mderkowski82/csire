@@ -11,8 +11,10 @@ import pl.npesystem.data.AbstractEntity;
 import pl.npesystem.data.Role;
 import pl.npesystem.data.enums.FormTab;
 import pl.npesystem.data.enums.RendererType;
+import pl.npesystem.services.records.ColumnProp;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -22,8 +24,7 @@ import java.util.Objects;
         view = {Role.USER, Role.ADMIN},
         edit = {Role.USER, Role.ADMIN},
         delete = {Role.USER, Role.ADMIN},
-        title = "TEST ENTITY",
-        defaultColumn = {"stringValue","intValue","longValue","bigDecimalValue","enumValue"}
+        title = "TEST ENTITY"
 )
 @Getter
 @Setter
@@ -66,5 +67,15 @@ public class TestEntity extends AbstractEntity {
         result = 31 * result + Objects.hashCode(bigDecimalValue);
         result = 31 * result + Objects.hashCode(enumValue);
         return result;
+    }
+
+    public List<ColumnProp> getDefaultColumn() {
+        return List.of(
+                new ColumnProp("stringValue", "String Text"),
+                new ColumnProp("intValue", "Integer Text"),
+                new ColumnProp("longValue", "Long Text"),
+                new ColumnProp("bigDecimalValue", "BigDecimal Text"),
+                new ColumnProp("enumValue", "String Text")
+        );
     }
 }

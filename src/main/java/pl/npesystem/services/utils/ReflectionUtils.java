@@ -6,8 +6,11 @@ import pl.npesystem.annotations.FuckedProp;
 import pl.npesystem.data.AbstractEntity;
 import pl.npesystem.models.records.FieldPropInfo;
 import pl.npesystem.models.records.FuckedPropInfo;
+import pl.npesystem.services.records.ColumnProp;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
@@ -28,14 +31,27 @@ public class ReflectionUtils {
 
         if (annotation != null) {
             List<FieldPropInfo> fieldPropInfo = toFieldPropInfo(aClass);
+            try {
+                // Creating an instance of the Class
+                Object instance = aClass.getDeclaredConstructor().newInstance();
 
-            return new FuckedPropInfo(annotation.clazz(),
-                    annotation.view(),
-                    annotation.edit(),
-                    annotation.delete(),
-                    annotation.title(),
-                    annotation.defaultColumn()
-            );
+                // Fetching the method
+                Method getDefaultColumnMethod = aClass.getDeclaredMethod("getDefaultColumn");
+
+                // Invocation of the method
+                List<ColumnProp> defaultColumns = (List<ColumnProp>) getDefaultColumnMethod.invoke(instance);
+
+                return new FuckedPropInfo(annotation.clazz(),
+                        annotation.view(),
+                        annotation.edit(),
+                        annotation.delete(),
+                        annotation.title(),
+                        defaultColumns
+                );
+
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+                throw new RuntimeException("Could not call getDefaultColumn on " + aClass.getName(), e);
+            }
         }
         throw new RuntimeException("No FuckedProp annotation is present on " + aClass.getName());
     }

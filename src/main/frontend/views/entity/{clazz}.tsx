@@ -9,6 +9,7 @@ import Direction from "Frontend/generated/pl/npesystem/models/dto/FilterRequestD
 import FuckedPropInfo from "Frontend/generated/pl/npesystem/models/records/FuckedPropInfo";
 import LogicOperator from "Frontend/generated/pl/npesystem/models/dto/FilterRequestDTO/LogicOperator";
 import Operation from "Frontend/generated/pl/npesystem/models/dto/FilterRequestDTO/Operation";
+import {Grid, GridSortColumn} from "@vaadin/react-components";
 
 export const config: ViewConfig = {
 	menu: {order: 66, icon: 'line-awesome/svg/globe-solid.svg'},
@@ -85,7 +86,15 @@ export default function TableView() {
 			<section className="flex flex-col p-m gap-m">
 				<div>View: {canView ? "TAK" : "NIE"}</div>
 				<div>Edit: {canEdit ? "TAK" : "NIE"}</div>
-				<div></div>
+				<div>
+					<Grid items={[]}>
+						<GridSortColumn path="id" />
+						<GridSortColumn header="Name" path="displayName" />
+						<GridSortColumn path="email" />
+						<GridSortColumn path="profession" />
+						<GridSortColumn path="birthday" />
+					</Grid>
+				</div>
 				<pre>
 					{JSON.stringify(fuckedPropInfo, null, 2)}
 				</pre>
