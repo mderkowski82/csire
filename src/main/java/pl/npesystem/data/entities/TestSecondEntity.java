@@ -1,7 +1,7 @@
 package pl.npesystem.data.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,15 +17,13 @@ import pl.npesystem.data.interfaces.TableInterface;
 import pl.npesystem.services.records.ColumnProp;
 
 import java.math.BigDecimal;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
-@Table(name = "TEST_ENTITY")
+@Table(name = "TEST_SECOND_ENTITY")
 @FuckedProp(
-        clazz = TestEntity.clazzId,
+        clazz = TestSecondEntity.clazzId,
         view = {Role.USER, Role.ADMIN},
         edit = {Role.USER, Role.ADMIN},
         delete = {Role.USER, Role.ADMIN},
@@ -33,10 +31,9 @@ import java.util.Set;
 )
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
-public class TestEntity extends AbstractEntity implements TableInterface {
-    public static final String clazzId = "666";
+public class TestSecondEntity extends AbstractEntity implements TableInterface {
+    public static final String clazzId = "667";
 
     @FieldProp(position = 1, tab = FormTab.General,label="String Text", renderer = RendererType.Text)
     private String stringValue;
@@ -50,36 +47,23 @@ public class TestEntity extends AbstractEntity implements TableInterface {
     @FieldProp(position = 4, label="BigDecimal Text", renderer = RendererType.BigDecimal)
     private BigDecimal bigDecimalValue;
 
-    @FieldProp(position = 5, label="Boolean Text", renderer = RendererType.Boolean)
-    private Boolean aBooleanValue;
-
-    @FieldProp(position = 7, label="Role", renderer = RendererType.Enumerated)
+    @FieldProp(position = 5, label="String Text", renderer = RendererType.Enumerated)
     @Enumerated(EnumType.STRING)
     private Role enumValue;
 
-    @ElementCollection
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    @CollectionTable(name = "TEST_ENTITY_role", joinColumns = @JoinColumn(name = "owner_id"))
-    @FieldProp(position = 8, label="Set Role", renderer = RendererType.Enumerateds)
-    private Set<Role> enumValues = new LinkedHashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "test_entity_id")
+    @JsonBackReference
+    private TestEntity testEntity;
 
-    @ToString.Exclude
-    @OneToOne
-    @JoinColumn(name = "test_second_entity_id")
-    @FieldProp(position = 10, label="Entity", renderer = RendererType.Entity)
-    @JsonManagedReference
-    private TestSecondEntity testSecondEntity;
-
-    @OneToMany(mappedBy = "testEntity", orphanRemoval = true)
-    @FieldProp(position = 11, label="Set Entity", renderer = RendererType.Entities)
-    @JsonManagedReference
-    private Set<TestSecondEntity> testSecondEntities = new LinkedHashSet<>();
+    @OneToOne(mappedBy = "testSecondEntity", orphanRemoval = true)
+    @JsonBackReference
+    private TestEntity testEntity2;
 
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TestEntity that)) return false;
+        if (!(o instanceof TestSecondEntity that)) return false;
         if (!super.equals(o)) return false;
 
         return Objects.equals(stringValue, that.stringValue) && Objects.equals(intValue, that.intValue) && Objects.equals(longValue, that.longValue) && Objects.equals(bigDecimalValue, that.bigDecimalValue) && enumValue == that.enumValue;
@@ -103,11 +87,12 @@ public class TestEntity extends AbstractEntity implements TableInterface {
                 new ColumnProp("intValue", "Integer Text"),
                 new ColumnProp("longValue", "Long Text"),
                 new ColumnProp("bigDecimalValue", "BigDecimal Text"),
-                new ColumnProp("aBooleanValue", "Boolean Text"),
-                new ColumnProp("enumValue", "String Text"),
-                new ColumnProp("enumValues", "Set Role"),
-                new ColumnProp("testSecondEntity", "Entity"),
-                new ColumnProp("testSecondEntities", "Entities")
+                new ColumnProp("enumValue", "String Text")
         );
+    }
+
+    @Override
+    public String toString() {
+        return this.getId() + " " + this.getStringValue();
     }
 }

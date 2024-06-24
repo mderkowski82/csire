@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Service
 public class FuckedPropServices {
     public Optional<Set<FuckedPropInfo>> getTableEntities() {
-        Set<Class<?>> allEntities = ReflectionUtils.getAllEntities();
+        Set<Class<?>> allEntities = ReflectionUtils.getAllEntitiesClass();
 
         Set<FuckedPropInfo> classInfo = allEntities.stream().map(ReflectionUtils::toFuckedPropInfo).collect(Collectors.toUnmodifiableSet());
 

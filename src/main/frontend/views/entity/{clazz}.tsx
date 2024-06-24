@@ -20,7 +20,7 @@ export const config: ViewConfig = {
 
 export default function TableView() {
 	const [fuckedPropInfo,setFuckedPropInfo] = useState<FuckedPropInfo>();
-	const [fetchData,setFetchData] = useState<FuckedPropInfo>();
+	const [fetchData,setFetchData] = useState<Record<string,any>>();
 	const { clazz } = useParams();
 	const {state, logout} = useAuth();
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -50,7 +50,7 @@ export default function TableView() {
 		}
 
 		TableDataProviderEndpoint.getTableDataFiltered({
-			entityName:"aa",
+			entityName:"TestEntity",
 			pageRequest:{
 				page: 1,
 				size: 10,
@@ -61,15 +61,17 @@ export default function TableView() {
 			},
 			filters: [
 				{
-					fieldName: "name",
+					fieldName: "longValue",
 					logicOperator: LogicOperator.AND,
-					values: ["Emma Executive"],
+					values: [5],
 					operation: Operation.EQUALS,
 					wildcard: ""
 				}
 			]
-		}).then(value => setFetchData(value ?? ""));
-
+		}).then(value => {
+			console.log(value)
+			setFetchData(value)
+		});
 	}, [clazz]);
 
 
@@ -81,25 +83,46 @@ export default function TableView() {
 	const canEdit = userRoles?.some(role => editRoleRequired?.includes(role));
 
 
+	function formatElement(itemElement: any): string {
+		if(typeof itemElement === 'object' && 'id' in itemElement && 'value' in itemElement) {
+			return `[${itemElement.id}] ${itemElement.value}`
+		} else {
+			return itemElement;
+		}
+	}
+
+	function getFormatted(itemElement: any) : string {
+		if (typeof itemElement === 'object') {
+			if (Array.isArray(itemElement)) {
+				return itemElement.map(element => formatElement(element)).join(', ')
+			}
+			else {
+				return formatElement(itemElement);
+			}
+		}
+		return itemElement;
+	}
 	return (
 		<>
 			<section className="flex flex-col p-m gap-m">
 				<div>View: {canView ? "TAK" : "NIE"}</div>
 				<div>Edit: {canEdit ? "TAK" : "NIE"}</div>
 				<div>
-					<Grid items={[]}>
-						<GridSortColumn path="id" />
-						<GridSortColumn header="Name" path="displayName" />
-						<GridSortColumn path="email" />
-						<GridSortColumn path="profession" />
-						<GridSortColumn path="birthday" />
+					<Grid items={fetchData as [] ?? []}>
+						{
+							fuckedPropInfo?.defaultColumn.map(value => {
+								return <GridSortColumn key={value.fieldName} header={value.label} path={value.fieldName}>
+									{props => getFormatted(props.item[value.fieldName])}
+								</GridSortColumn>
+							})
+						}
 					</Grid>
 				</div>
 				<pre>
 					{JSON.stringify(fuckedPropInfo, null, 2)}
 				</pre>
 				<pre>
-					{JSON.stringify(fetchData, null, 2)}
+					{JSON.stringify(fetchData, null,2)}
 				</pre>
 				<pre>
 					{compressedData && JSON.stringify(decompressData(compressedData), null, 2)}

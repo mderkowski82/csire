@@ -5,9 +5,10 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import org.springframework.stereotype.Service;
+import pl.npesystem.data.AbstractEntity;
 import pl.npesystem.models.dto.FilterRequestDTO;
 
-import java.time.OffsetDateTime;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,14 @@ public class DataFilterService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public <T> List<T> getFilteredData(FilterRequestDTO filterRequest, Class<T> type) {
+
+    @SuppressWarnings("unchecked")
+    public <T extends AbstractEntity> List<T> getFilteredEntity(FilterRequestDTO filter) throws ClassNotFoundException {
+        Class<?> aClass = Class.forName("pl.npesystem.data.entities." + filter.getEntityName());
+        return getFilteredEntity(filter, (Class<T>) aClass);
+    }
+
+    private <T extends AbstractEntity> List<T> getFilteredEntity(FilterRequestDTO filterRequest, Class<T> type) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> cq = cb.createQuery(type);
 
@@ -26,34 +34,84 @@ public class DataFilterService {
 
         for (FilterRequestDTO.FilterCriteriaDTO filter : filterRequest.getFilters()) {
             Path<Object> path = root.get(filter.getFieldName());
-            if (filter.getOperation().equals(FilterRequestDTO.Operation.EQUALS)) {
-                predicates.add(cb.equal(cb.lower(path.as(String.class)), filter.getValues().get(0).toString().toLowerCase()));
-            } else if (filter.getOperation().equals(FilterRequestDTO.Operation.NOT_EQUALS)) {
-                predicates.add(cb.notEqual(cb.lower(path.as(String.class)), filter.getValues().get(0).toString().toLowerCase()));
-            } else if (filter.getOperation().equals(FilterRequestDTO.Operation.GREATER_THAN)) {
-                predicates.add(cb.greaterThan(path.<Comparable>get(filter.getFieldName()), Comparable.class.cast(filter.getValues().get(0))));
-            } else if (filter.getOperation().equals(FilterRequestDTO.Operation.LESS_THAN)) {
-                predicates.add(cb.lessThan(path.<Comparable>get(filter.getFieldName()), Comparable.class.cast(filter.getValues().get(0))));
-            } else if (filter.getOperation().equals(FilterRequestDTO.Operation.GREATER_THAN_EQUAL_TO)) {
-                predicates.add(cb.greaterThanOrEqualTo(path.<Comparable>get(filter.getFieldName()), Comparable.class.cast(filter.getValues().get(0))));
-            } else if (filter.getOperation().equals(FilterRequestDTO.Operation.LESS_THAN_EQUAL_TO)) {
-                predicates.add(cb.lessThanOrEqualTo(path.<Comparable>get(filter.getFieldName()), Comparable.class.cast(filter.getValues().get(0))));
-            } else if (filter.getOperation().equals(FilterRequestDTO.Operation.BETWEEN)) {
-                predicates.add(cb.between(path.<Comparable>get(filter.getFieldName()), Comparable.class.cast(filter.getValues().get(0)), Comparable.class.cast(filter.getValues().get(1))));
-            } else if (filter.getOperation().equals(FilterRequestDTO.Operation.IN)) {
-                CriteriaBuilder.In<Object> inClause = cb.in(path);
-                for (Object val : filter.getValues()) {
-                    inClause.value(val);
+            switch (filter.getOperation()) {
+                case EQUALS -> {
+                    if (path.getJavaType().equals(BigDecimal.class)) {
+                        BigDecimal filterValue = new BigDecimal(filter.getValues().get(0).toString());
+                        predicates.add(cb.equal(path, filterValue));
+                    } else {
+                        predicates.add(cb.equal(cb.lower(path.as(String.class)), filter.getValues().get(0).toString().toLowerCase()));
+                    }
                 }
-                predicates.add(inClause);
-            } else if (filter.getOperation().equals(FilterRequestDTO.Operation.NULL)) {
-                predicates.add(cb.isNull(path));
-            } else if (filter.getOperation().equals(FilterRequestDTO.Operation.NOT_NULL)) {
-                predicates.add(cb.isNotNull(path));
-            } else if (filter.getOperation().equals(FilterRequestDTO.Operation.LIKE)) {
-                predicates.add(cb.like(cb.lower(path.as(String.class)), "%%%s%%".formatted(filter.getWildcard().toLowerCase())));
-            } else if (filter.getOperation().equals(FilterRequestDTO.Operation.NOT_LIKE)) {
-                predicates.add(cb.notLike(cb.lower(path.as(String.class)), filter.getWildcard().toLowerCase()));            }
+                case NOT_EQUALS -> {
+                    if (path.getJavaType().equals(BigDecimal.class)) {
+                        BigDecimal filterValue = new BigDecimal(filter.getValues().get(0).toString());
+                        predicates.add(cb.notEqual(path, filterValue));
+                    } else {
+                        predicates.add(cb.notEqual(cb.lower(path.as(String.class)), filter.getValues().get(0).toString().toLowerCase()));
+                    }
+                }
+                case GREATER_THAN -> {
+                    if (path.getJavaType().equals(BigDecimal.class)) {
+                        BigDecimal filterValue = new BigDecimal(filter.getValues().get(0).toString());
+                        predicates.add(cb.greaterThan(path.as(BigDecimal.class), filterValue));
+                    } else {
+                        String string = filter.getValues().get(0).toString();
+                        predicates.add(cb.greaterThan(cb.lower(path.as(String.class)), string.toLowerCase()));
+                    }
+                }
+                case LESS_THAN -> {
+                    if (path.getJavaType().equals(BigDecimal.class)) {
+                        BigDecimal filterValue = new BigDecimal(filter.getValues().get(0).toString());
+                        predicates.add(cb.lessThan(path.as(BigDecimal.class), filterValue));
+                    } else {
+                        String string = filter.getValues().get(0).toString();
+                        predicates.add(cb.lessThan(cb.lower(path.as(String.class)), string.toLowerCase()));
+                    }
+                }
+                case GREATER_THAN_EQUAL_TO -> {
+                    if (path.getJavaType().equals(BigDecimal.class)) {
+                        BigDecimal filterValue = new BigDecimal(filter.getValues().get(0).toString());
+                        predicates.add(cb.greaterThanOrEqualTo(path.as(BigDecimal.class), filterValue));
+                    } else {
+                        String string = filter.getValues().get(0).toString();
+                        predicates.add(cb.greaterThanOrEqualTo(cb.lower(path.as(String.class)), string.toLowerCase()));
+                    }
+                }
+                case LESS_THAN_EQUAL_TO -> {
+                    if (path.getJavaType().equals(BigDecimal.class)) {
+                        BigDecimal filterValue = new BigDecimal(filter.getValues().get(0).toString());
+                        predicates.add(cb.lessThanOrEqualTo(path.as(BigDecimal.class), filterValue));
+                    } else {
+                        String string = filter.getValues().get(0).toString();
+                        predicates.add(cb.lessThanOrEqualTo(cb.lower(path.as(String.class)), string.toLowerCase()));
+                    }
+                }
+                case BETWEEN -> {
+                    if (path.getJavaType().equals(BigDecimal.class)) {
+                        BigDecimal filterValueLower = new BigDecimal(filter.getValues().get(0).toString());
+                        BigDecimal filterValueUpper = new BigDecimal(filter.getValues().get(1).toString());
+                        predicates.add(cb.between(path.as(BigDecimal.class), filterValueLower, filterValueUpper));
+                    } else {
+                        String stringLower = filter.getValues().get(0).toString();
+                        String stringUpper = filter.getValues().get(1).toString();
+                        predicates.add(cb.between(cb.lower(path.as(String.class)), stringLower.toLowerCase(), stringUpper.toLowerCase()));
+                    }
+                }
+                case IN -> {
+                    CriteriaBuilder.In<Object> inClause = cb.in(path);
+                    for (Object val : filter.getValues()) {
+                        inClause.value(val);
+                    }
+                    predicates.add(inClause);
+                }
+                case NULL -> predicates.add(cb.isNull(path));
+                case NOT_NULL -> predicates.add(cb.isNotNull(path));
+                case LIKE ->
+                        predicates.add(cb.like(cb.lower(path.as(String.class)), "%%%s%%".formatted(filter.getWildcard().toLowerCase())));
+                case NOT_LIKE ->
+                        predicates.add(cb.notLike(cb.lower(path.as(String.class)), filter.getWildcard().toLowerCase()));
+            }
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
