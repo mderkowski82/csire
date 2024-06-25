@@ -61,9 +61,9 @@ export default function TableView() {
 			},
 			filters: [
 				{
-					fieldName: "longValue",
+					fieldName: "testSecondEntity.stringValue",
 					logicOperator: LogicOperator.AND,
-					values: [5],
+					values: ['aa'],
 					operation: Operation.EQUALS,
 					wildcard: ""
 				}
