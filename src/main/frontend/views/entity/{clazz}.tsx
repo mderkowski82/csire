@@ -52,7 +52,7 @@ export default function TableView() {
 		TableDataProviderEndpoint.getTableDataFiltered({
 			entityName:"TestEntity",
 			pageRequest:{
-				page: 1,
+				page: 0,
 				size: 10,
 				sort: {
 					direction: Direction.ASC,

@@ -115,8 +115,15 @@ public class DataFilterService {
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
+        cq.orderBy(filterRequest.getPageRequest().getSort().getDirection() == FilterRequestDTO.Direction.ASC ?
+                cb.asc(root.get(filterRequest.getPageRequest().getSort().getProperty())) :
+                cb.desc(root.get(filterRequest.getPageRequest().getSort().getProperty())));
+
 
         TypedQuery<T> query = entityManager.createQuery(cq);
+        query.setFirstResult(filterRequest.getPageRequest().getPage() * filterRequest.getPageRequest().getSize());
+        query.setMaxResults(filterRequest.getPageRequest().getSize());
+
         return query.getResultList();
     }
 }
