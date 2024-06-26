@@ -5,7 +5,13 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import lombok.SneakyThrows;
+import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Result;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.npesystem.csire.jooq.tables.TestEntity;
+import pl.npesystem.csire.jooq.tables.records.TestEntityRecord;
 import pl.npesystem.data.AbstractEntity;
 import pl.npesystem.models.dto.FilterRequestDTO;
 
@@ -20,6 +26,9 @@ public class DataFilterService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private DSLContext dsl;
+
 
     @SuppressWarnings("unchecked")
     public <T extends AbstractEntity> List<T> getFilteredEntity(FilterRequestDTO filter) throws ClassNotFoundException {
@@ -29,55 +38,61 @@ public class DataFilterService {
 
     @SneakyThrows
     private <T extends AbstractEntity> List<T> getFilteredEntity(FilterRequestDTO filterRequest, Class<T> type) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> cq = cb.createQuery(type);
 
-        Root<T> root = cq.from(type);
-        List<Predicate> predicates = new ArrayList<>();
+        Result<TestEntityRecord> testEntityRecords = dsl.select().from(TestEntity.TEST_ENTITY).where(TestEntity.TEST_ENTITY.ID.eq(1L)).fetchInto(TestEntity.TEST_ENTITY);
+        System.out.println(testEntityRecords);
 
-        for (FilterRequestDTO.FilterCriteriaDTO filter : filterRequest.getFilters()) {
+//        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+//        CriteriaQuery<T> cq = cb.createQuery(type);
+//
+//        Root<T> root = cq.from(type);
+//        List<Predicate> predicates = new ArrayList<>();
+//
+//        for (FilterRequestDTO.FilterCriteriaDTO filter : filterRequest.getFilters()) {
+//
+//            Path<T> path = root;
+//            String[] fields = filter.getFieldName().split("\\.");
+//            for (String field : fields) {
+//                path = path.get(field);
+//            }
+//
+//
+//            Class<?> javaType = path.getJavaType();
+//
+//            if (javaType.equals(String.class)) {
+//                createStringPredicate(filter, predicates, cb, path);
+//            } else if (javaType.equals(BigDecimal.class)) {
+//                createBigDecimalPredicate(filter, predicates, cb, path);
+//            } else if (javaType.equals(Integer.class)) {
+//                createIntegerPrecicate(filter, predicates, cb, path);
+//            } else if (javaType.equals(Long.class)) {
+//                createLongPredicate(filter, predicates, cb, path);
+//            } else if(AbstractEntity.class.isAssignableFrom(javaType)) {
+//                createEntityPredicate(filter, (Class<? extends AbstractEntity>) javaType, predicates, cb, path);
+//            } else if (Collection.class.isAssignableFrom(javaType)) {
+//                createCollectionPredicate(filter, cb, path, predicates);
+//            } else if (javaType.isEnum()) {
+//                createEnumPredicate(filter, predicates, cb, path);
+//            } else if (javaType.equals(Boolean.class)) {
+//                createBooleanPredicate(filter, predicates, cb, path);
+//            } else {
+//                throw new IllegalArgumentException("Unsupported type: " + path.getJavaType());
+//            }
+//        }
+//
+//        cq.where(predicates.toArray(new Predicate[0]));
+//        cq.orderBy(filterRequest.getPageRequest().getSort().getDirection() == FilterRequestDTO.Direction.ASC ?
+//                cb.asc(root.get(filterRequest.getPageRequest().getSort().getProperty())) :
+//                cb.desc(root.get(filterRequest.getPageRequest().getSort().getProperty())));
+//
+//
+//        TypedQuery<T> query = entityManager.createQuery(cq);
+//        query.setFirstResult(filterRequest.getPageRequest().getPage() * filterRequest.getPageRequest().getSize());
+//        query.setMaxResults(filterRequest.getPageRequest().getSize());
+//
+//        return query.getResultList();
 
-            Path<T> path = root;
-            String[] fields = filter.getFieldName().split("\\.");
-            for (String field : fields) {
-                path = path.get(field);
-            }
-
-
-            Class<?> javaType = path.getJavaType();
-
-            if (javaType.equals(String.class)) {
-                createStringPredicate(filter, predicates, cb, path);
-            } else if (javaType.equals(BigDecimal.class)) {
-                createBigDecimalPredicate(filter, predicates, cb, path);
-            } else if (javaType.equals(Integer.class)) {
-                createIntegerPrecicate(filter, predicates, cb, path);
-            } else if (javaType.equals(Long.class)) {
-                createLongPredicate(filter, predicates, cb, path);
-            } else if(AbstractEntity.class.isAssignableFrom(javaType)) {
-                createEntityPredicate(filter, (Class<? extends AbstractEntity>) javaType, predicates, cb, path);
-            } else if (Collection.class.isAssignableFrom(javaType)) {
-                createCollectionPredicate(filter, cb, path, predicates);
-            } else if (javaType.isEnum()) {
-                createEnumPredicate(filter, predicates, cb, path);
-            } else if (javaType.equals(Boolean.class)) {
-                createBooleanPredicate(filter, predicates, cb, path);
-            } else {
-                throw new IllegalArgumentException("Unsupported type: " + path.getJavaType());
-            }
-        }
-
-        cq.where(predicates.toArray(new Predicate[0]));
-        cq.orderBy(filterRequest.getPageRequest().getSort().getDirection() == FilterRequestDTO.Direction.ASC ?
-                cb.asc(root.get(filterRequest.getPageRequest().getSort().getProperty())) :
-                cb.desc(root.get(filterRequest.getPageRequest().getSort().getProperty())));
-
-
-        TypedQuery<T> query = entityManager.createQuery(cq);
-        query.setFirstResult(filterRequest.getPageRequest().getPage() * filterRequest.getPageRequest().getSize());
-        query.setMaxResults(filterRequest.getPageRequest().getSize());
-
-        return query.getResultList();
+        return new ArrayList<>();
     }
 
     protected <T extends AbstractEntity> void createBooleanPredicate(FilterRequestDTO.FilterCriteriaDTO filter, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
