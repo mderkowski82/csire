@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import pl.npesystem.data.AbstractEntity;
 import pl.npesystem.models.dto.FilterRequestDTO;
@@ -26,6 +27,7 @@ public class DataFilterService {
         return getFilteredEntity(filter, (Class<T>) aClass);
     }
 
+    @SneakyThrows
     private <T extends AbstractEntity> List<T> getFilteredEntity(FilterRequestDTO filterRequest, Class<T> type) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> cq = cb.createQuery(type);
@@ -43,6 +45,7 @@ public class DataFilterService {
 
 
             Class<?> javaType = path.getJavaType();
+
             if (javaType.equals(String.class)) {
                 createStringPredicate(filter, predicates, cb, path);
             } else if (javaType.equals(BigDecimal.class)) {
@@ -77,7 +80,7 @@ public class DataFilterService {
         return query.getResultList();
     }
 
-    private static <T extends AbstractEntity> void createBooleanPredicate(FilterRequestDTO.FilterCriteriaDTO filter, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
+    protected <T extends AbstractEntity> void createBooleanPredicate(FilterRequestDTO.FilterCriteriaDTO filter, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
         Boolean filterValue = (Boolean) filter.getValues().get(0);
         switch (filter.getOperation()) {
             case EQUALS -> predicates.add(cb.equal(path, filterValue));
@@ -92,10 +95,16 @@ public class DataFilterService {
                     throw new IllegalArgumentException("Operation LESS_THAN_EQUAL_TO is not supported for Boolean type");
             case BETWEEN ->
                     throw new IllegalArgumentException("Operation BETWEEN is not supported for Boolean type");
+            case IN -> throw new IllegalArgumentException("Operation IN is not supported for Boolean type");
+            case LIKE -> throw new IllegalArgumentException("Operation LIKE is not supported for Boolean type");
+            case NOT_LIKE -> throw new IllegalArgumentException("Operation NOT_LIKE is not supported for Boolean type");
+            case NULL -> predicates.add(cb.isNull(path));
+            case NOT_NULL -> predicates.add(cb.isNotNull(path));
+            default -> throw new IllegalArgumentException("Unsupported operation: " + filter.getOperation());
         }
     }
 
-    private static <T extends AbstractEntity> void createEnumPredicate(FilterRequestDTO.FilterCriteriaDTO filter, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
+    protected <T extends AbstractEntity> void createEnumPredicate(FilterRequestDTO.FilterCriteriaDTO filter, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
         Enum<?> filterValue = (Enum<?>) filter.getValues().get(0);
         switch (filter.getOperation()) {
             case EQUALS -> predicates.add(cb.equal(path, filterValue));
@@ -113,7 +122,7 @@ public class DataFilterService {
         }
     }
 
-    private static <T extends AbstractEntity> void createCollectionPredicate(FilterRequestDTO.FilterCriteriaDTO filter, CriteriaBuilder cb, Path<T> path, List<Predicate> predicates) {
+    protected <T extends AbstractEntity> void createCollectionPredicate(FilterRequestDTO.FilterCriteriaDTO filter, CriteriaBuilder cb, Path<T> path, List<Predicate> predicates) {
         Collection<?> filterValue = (Collection<?>) filter.getValues().get(0);
         CriteriaBuilder.In<Object> inClause = cb.in(path);
         for (Object val : filterValue) {
@@ -122,7 +131,7 @@ public class DataFilterService {
         predicates.add(inClause);
     }
 
-    private <T extends AbstractEntity> void createEntityPredicate(FilterRequestDTO.FilterCriteriaDTO filter, Class<? extends AbstractEntity> javaType, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
+    protected <T extends AbstractEntity> void createEntityPredicate(FilterRequestDTO.FilterCriteriaDTO filter, Class<? extends AbstractEntity> javaType, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
         Class<? extends AbstractEntity> entityClass = javaType;
 
         Long dbId = Long.valueOf(filter.getValues().get(0).toString());
@@ -155,7 +164,7 @@ public class DataFilterService {
         }
     }
 
-    private static <T extends AbstractEntity> void createLongPredicate(FilterRequestDTO.FilterCriteriaDTO filter, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
+    protected <T extends AbstractEntity> void createLongPredicate(FilterRequestDTO.FilterCriteriaDTO filter, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
         Long filterValue = Long.valueOf(filter.getValues().get(0).toString());
         switch (filter.getOperation()) {
             case EQUALS -> predicates.add(cb.equal(path, filterValue));
@@ -173,7 +182,7 @@ public class DataFilterService {
         }
     }
 
-    private static <T extends AbstractEntity> void createIntegerPrecicate(FilterRequestDTO.FilterCriteriaDTO filter, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
+    protected <T extends AbstractEntity> void createIntegerPrecicate(FilterRequestDTO.FilterCriteriaDTO filter, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
         Integer filterValue = (Integer) filter.getValues().get(0);
         switch (filter.getOperation()) {
             case EQUALS -> predicates.add(cb.equal(path, filterValue));
@@ -192,7 +201,7 @@ public class DataFilterService {
         }
     }
 
-    private static <T extends AbstractEntity> void createBigDecimalPredicate(FilterRequestDTO.FilterCriteriaDTO filter, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
+    protected <T extends AbstractEntity> void createBigDecimalPredicate(FilterRequestDTO.FilterCriteriaDTO filter, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
         BigDecimal filterValue = new BigDecimal(filter.getValues().get(0).toString());
         switch (filter.getOperation()) {
             case EQUALS -> predicates.add(cb.equal(path, filterValue));
@@ -212,7 +221,7 @@ public class DataFilterService {
         }
     }
 
-    private static <T extends AbstractEntity> void createStringPredicate(FilterRequestDTO.FilterCriteriaDTO filter, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
+    protected <T extends AbstractEntity> void createStringPredicate(FilterRequestDTO.FilterCriteriaDTO filter, List<Predicate> predicates, CriteriaBuilder cb, Path<T> path) {
         String string = filter.getValues().get(0).toString();
         switch (filter.getOperation()) {
             case EQUALS -> predicates.add(cb.equal(cb.lower(path.as(String.class)), string.toLowerCase()));
@@ -232,6 +241,15 @@ public class DataFilterService {
                     throw new IllegalArgumentException("Operation LESS_THAN_EQUAL_TO is not supported for String type");
             case BETWEEN ->
                     throw new IllegalArgumentException("Operation BETWEEN is not supported for String type");
+            case NOT_NULL -> predicates.add(cb.isNotNull(path));
+            case NULL -> predicates.add(cb.isNull(path));
+            case IN -> {
+                CriteriaBuilder.In<Object> inClause = cb.in(path);
+                for (Object val : filter.getValues()) {
+                    inClause.value(val);
+                }
+                predicates.add(inClause);
+            }
         }
     }
 }

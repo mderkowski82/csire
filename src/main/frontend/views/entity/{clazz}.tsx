@@ -7,7 +7,6 @@ import {compressData, decompressData} from "Frontend/util/search-params-utils";
 import {TableData} from "Frontend/types/table/types";
 import Direction from "Frontend/generated/pl/npesystem/models/dto/FilterRequestDTO/Direction";
 import FuckedPropInfo from "Frontend/generated/pl/npesystem/models/records/FuckedPropInfo";
-import LogicOperator from "Frontend/generated/pl/npesystem/models/dto/FilterRequestDTO/LogicOperator";
 import Operation from "Frontend/generated/pl/npesystem/models/dto/FilterRequestDTO/Operation";
 import {Grid, GridSortColumn} from "@vaadin/react-components";
 
@@ -16,8 +15,6 @@ export const config: ViewConfig = {
 	title: 'Table',
 };
 
-
-
 export default function TableView() {
 	const [fuckedPropInfo,setFuckedPropInfo] = useState<FuckedPropInfo>();
 	const [fetchData,setFetchData] = useState<Record<string,any>>();
@@ -25,9 +22,13 @@ export default function TableView() {
 	const {state, logout} = useAuth();
 	const [searchParams, setSearchParams] = useSearchParams();
 	const compressedData = searchParams.get('table');
-
-
-
+	const json:TableData = {
+		page: 1,
+		pageSize:50,
+		sortedBy:'id',
+		sortedDirection: "asc",
+		clazz: clazz ?? ""
+	}
 
 	useEffect(() => {
 		if(clazz) {
@@ -38,13 +39,7 @@ export default function TableView() {
 		if(compressedData) {
 			console.log(decompressData(compressedData));
 		} else {
-			const json:TableData = {
-				page: 1,
-				pageSize:50,
-				sortedBy:'id',
-				sortedDirection: "asc",
-				clazz: clazz ?? ""
-			}
+
 			searchParams.set('table', compressData(json));
 			setSearchParams(searchParams);
 		}
@@ -61,8 +56,7 @@ export default function TableView() {
 			},
 			filters: [
 				{
-					fieldName: "testSecondEntity.stringValue",
-					logicOperator: LogicOperator.AND,
+					fieldName: "aBooleanValue",
 					values: ['aa'],
 					operation: Operation.EQUALS,
 					wildcard: ""
