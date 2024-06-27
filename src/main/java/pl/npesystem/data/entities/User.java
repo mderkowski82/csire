@@ -7,6 +7,7 @@ import pl.npesystem.annotations.FuckedProp;
 import pl.npesystem.data.AbstractEntity;
 import pl.npesystem.data.Role;
 import pl.npesystem.data.enums.RendererType;
+import pl.npesystem.data.repositories.UserRepository;
 import pl.npesystem.services.records.ColumnProp;
 
 import java.util.List;
@@ -15,7 +16,12 @@ import java.util.Set;
 @Entity
 @Table(name = "application_user")
 @FuckedProp(
-        clazz = User.clazzId, view = {Role.USER, Role.ADMIN}, edit = {Role.USER, Role.ADMIN}, delete = {Role.USER, Role.ADMIN}, title = "Użytkownicy")
+        repository = UserRepository.class,
+        clazz = User.clazzId,
+        view = {Role.USER, Role.ADMIN},
+        edit = {Role.USER, Role.ADMIN},
+        delete = {Role.USER, Role.ADMIN},
+        title = "Użytkownicy")
 public class User extends AbstractEntity {
     public static final String clazzId = "1";
 

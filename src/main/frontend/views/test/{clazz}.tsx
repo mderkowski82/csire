@@ -7,6 +7,7 @@ import {TableData} from "Frontend/types/table/types";
 import Direction from "Frontend/generated/pl/npesystem/models/dto/FilterRequestDTO/Direction";
 import {Grid, GridSortColumn} from "@vaadin/react-components";
 import {booleanFalseEquals, booleanNullEquals, booleanTrueEquals} from "Frontend/components/testPredicates";
+import Operation from "Frontend/generated/pl/npesystem/models/dto/FilterRequestDTO/Operation";
 
 export const config: ViewConfig = {
 	menu: {order: 66, icon: 'line-awesome/svg/globe-solid.svg'},
@@ -17,8 +18,7 @@ export default function TableView() {
 	const { clazz } = useParams();
 
 	const[booleanNullEqualsJson, setBooleanNullEqualsJson] = useState<Record<any, any>>([]);
-	const[booleanTrueEqualsJson, setBooleanTrueEqualsJson] = useState<Record<any, any>>([]);
-	const[booleanFalseEqualsJson, setBooleanFalseEqualsJson] = useState<Record<any, any>>([]);
+
 
 	const json:TableData = {
 		page: 1,
@@ -43,30 +43,16 @@ export default function TableView() {
 			entityName:"TestEntity",
 			pageRequest: pageRequest,
 			filters: [
-				booleanNullEquals
+				{
+					fieldName: "bigDecimalValue",
+					values: [3.300000001],
+					operation: Operation.GREATER_THAN_EQUAL_TO,
+					wildcard: ""
+				}
 			]
 		}).then(value => {
+			console.log(value)
 			if(value) setBooleanNullEqualsJson(value);
-		});
-
-		TableDataProviderEndpoint.getTableDataFiltered({
-			entityName:"TestEntity",
-			pageRequest: pageRequest,
-			filters: [
-				booleanTrueEquals
-			]
-		}).then(value => {
-			if(value) setBooleanTrueEqualsJson(value);
-		});
-
-		TableDataProviderEndpoint.getTableDataFiltered({
-			entityName:"TestEntity",
-			pageRequest: pageRequest,
-			filters: [
-				booleanFalseEquals
-			]
-		}).then(value => {
-			if(value) setBooleanFalseEqualsJson(value);
 		});
 
 	}, [clazz]);
@@ -95,19 +81,8 @@ export default function TableView() {
 	return (
 		<>
 			<section className="flex flex-col p-m gap-m">
-				booleanNullEqualsJson
 				<pre>
 					{JSON.stringify(booleanNullEqualsJson, null, 2)}
-				</pre>
-
-				booleanTrueEqualsJson
-				<pre>
-					{JSON.stringify(booleanTrueEqualsJson, null, 2)}
-				</pre>
-
-				booleanFalseEqualsJson
-				<pre>
-					{JSON.stringify(booleanFalseEqualsJson, null, 2)}
 				</pre>
 			</section>
 		</>

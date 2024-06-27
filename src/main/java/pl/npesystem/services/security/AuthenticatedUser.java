@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pl.npesystem.data.entities.User;
-import pl.npesystem.data.UserRepository;
+import pl.npesystem.data.repositories.UserRepository;
 
 @Component
 public class AuthenticatedUser {

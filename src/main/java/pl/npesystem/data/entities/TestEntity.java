@@ -14,6 +14,7 @@ import pl.npesystem.data.Role;
 import pl.npesystem.data.enums.FormTab;
 import pl.npesystem.data.enums.RendererType;
 import pl.npesystem.data.interfaces.TableInterface;
+import pl.npesystem.data.repositories.TestEntityRepository;
 import pl.npesystem.services.records.ColumnProp;
 
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ import java.util.Set;
 @Entity
 @Table(name = "TEST_ENTITY")
 @FuckedProp(
+        repository = TestEntityRepository.class,
         clazz = TestEntity.clazzId,
         view = {Role.USER, Role.ADMIN},
         edit = {Role.USER, Role.ADMIN},

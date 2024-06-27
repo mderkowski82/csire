@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import pl.npesystem.data.entities.User;
-import pl.npesystem.data.UserRepository;
+import pl.npesystem.data.repositories.UserRepository;
 
 @Service
 public class UserService {

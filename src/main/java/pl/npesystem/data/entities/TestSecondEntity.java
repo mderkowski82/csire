@@ -14,6 +14,7 @@ import pl.npesystem.data.Role;
 import pl.npesystem.data.enums.FormTab;
 import pl.npesystem.data.enums.RendererType;
 import pl.npesystem.data.interfaces.TableInterface;
+import pl.npesystem.data.repositories.TestSecondEntityRepository;
 import pl.npesystem.services.records.ColumnProp;
 
 import java.math.BigDecimal;
@@ -23,6 +24,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "TEST_SECOND_ENTITY")
 @FuckedProp(
+        repository = TestSecondEntityRepository.class,
         clazz = TestSecondEntity.clazzId,
         view = {Role.USER, Role.ADMIN},
         edit = {Role.USER, Role.ADMIN},
