@@ -10,7 +10,9 @@ import pl.npesystem.data.AbstractEntity;
 import pl.npesystem.data.repositories.GenericRepository;
 import pl.npesystem.data.repositories.TestEntityRepository;
 import pl.npesystem.models.dto.FilterRequestDTO;
+import pl.npesystem.models.records.FieldPropInfo;
 import pl.npesystem.services.jpa.PredicateBuilder;
+import pl.npesystem.services.utils.ReflectionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -34,8 +36,16 @@ public class DataFilterService {
     @SneakyThrows
     protected <T extends AbstractEntity> List<T> getFilteredEntity(FilterRequestDTO filterRequest, Class<T> type) {
         PredicateBuilder<T> predicateBuilder = new PredicateBuilder<>(Predicate.BooleanOperator.AND);
-
         for (FilterRequestDTO.FilterCriteriaDTO filter : filterRequest.getFilters()) {
+            List<FieldPropInfo> fieldPropInfo = ReflectionUtils.toFieldPropInfo(type);
+
+            validateFilter(filter);
+            fieldPropInfo.stream()
+                    .filter(field -> field.fieldName().equals(filter.getFieldName()))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Field " + filter.getFieldName() + " not found"));
+
+
             switch (filter.getOperation()) {
                 case EQUALS -> predicateBuilder.equal(filter.getFieldName(), filter.getValues().toArray());
                 case NOT_EQUALS -> predicateBuilder.nonEqual(filter.getFieldName(), filter.getValues().toArray());
@@ -45,8 +55,8 @@ public class DataFilterService {
                 case LESS_THAN_EQUAL_TO -> predicateBuilder.lessOrEqual(filter.getFieldName(), (Comparable<?>) filter.getValues().get(0));
                 case BETWEEN -> predicateBuilder.between(filter.getFieldName(), (Comparable<?>) filter.getValues().get(0), (Comparable<?>) filter.getValues().get(1));
                 case IN -> predicateBuilder.in(filter.getFieldName(), (Collection<?>) filter.getValues().get(0));
-                case LIKE -> predicateBuilder.like(filter.getFieldName(), filter.getWildcard());
-                case NOT_LIKE -> predicateBuilder.notLike(filter.getFieldName(), filter.getWildcard());
+                case LIKE -> predicateBuilder.like(filter.getFieldName(), filter.getValues().get(0).toString());
+                case NOT_LIKE -> predicateBuilder.notLike(filter.getFieldName(), filter.getValues().get(0).toString());
                 case NULL -> predicateBuilder.isNull(filter.getFieldName());
                 case NOT_NULL -> predicateBuilder.isNotNull(filter.getFieldName());
                 default -> throw new IllegalArgumentException("Unsupported operation: " + filter.getOperation());
@@ -68,6 +78,26 @@ public class DataFilterService {
 
         return all;
 
+    }
+
+    private static void validateFilter(FilterRequestDTO.FilterCriteriaDTO filter) {
+        switch (filter.getOperation()) {
+            case EQUALS, NOT_EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_EQUAL_TO, LESS_THAN_EQUAL_TO, IN, LIKE, NOT_LIKE -> {
+                if (filter.getValues().size() != 1) {
+                    throw new IllegalArgumentException("Operation " + filter.getOperation() + " requires exactly one value");
+                }
+            }
+            case BETWEEN -> {
+                if (filter.getValues().size() != 2) {
+                    throw new IllegalArgumentException("Operation " + filter.getOperation() + " requires exactly two values");
+                }
+            }
+            case NULL, NOT_NULL -> {
+                if (!filter.getValues().isEmpty()) {
+                    throw new IllegalArgumentException("Operation " + filter.getOperation() + " requires no values");
+                }
+            }
+        }
     }
 
 }

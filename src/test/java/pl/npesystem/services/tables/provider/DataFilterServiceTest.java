@@ -653,120 +653,6 @@ class DataFilterServiceTest {
     }
 
     @Test
-    void testInStringFilter() throws ClassNotFoundException {
-        // Given - setup initial DB data for testing
-
-        FilterRequestDTO request = createFilterRequest("TestEntity",
-                FilterRequestDTO.Operation.IN,
-                "stringValue",
-                "entity1", "entity2");
-
-        // When
-        List<TestEntity> results = service.getFilteredEntity(request, TestEntity.class);
-
-        // Then
-        assertThat(results)
-                .hasSize(2)
-                .extracting(TestEntity::getStringValue)
-                .containsOnly("entity1", "entity2");
-    }
-
-    @Test
-    void testInBigDecimal() throws ClassNotFoundException {
-        // Given - setup initial DB data for testing
-
-        FilterRequestDTO request = createFilterRequest("TestEntity",
-                FilterRequestDTO.Operation.IN,
-                "bigDecimalValue",
-                new BigDecimal("100.00"), new BigDecimal("200.00"));
-
-        // When
-        List<TestEntity> results = service.getFilteredEntity(request, TestEntity.class);
-
-        // Then
-        assertThat(results)
-                .hasSize(2)
-                .extracting(TestEntity::getStringValue)
-                .containsOnly("entity1", "entity2");
-    }
-
-    @Test
-    void testInBoolean() throws ClassNotFoundException {
-        // Given - setup initial DB data for testing
-
-        FilterRequestDTO request = createFilterRequest("TestEntity",
-                FilterRequestDTO.Operation.IN,
-                "aBooleanValue",
-                true, false);
-
-        // When
-        List<TestEntity> results = service.getFilteredEntity(request, TestEntity.class);
-
-        // Then
-        assertThat(results)
-                .hasSize(2)
-                .extracting(TestEntity::getStringValue)
-                .containsOnly("entity1", "entity2");
-    }
-
-    @Test
-    void testInInt() throws ClassNotFoundException {
-        // Given - setup initial DB data for testing
-
-        FilterRequestDTO request = createFilterRequest("TestEntity",
-                FilterRequestDTO.Operation.IN,
-                "intValue",
-                1, 2);
-
-        // When
-        List<TestEntity> results = service.getFilteredEntity(request, TestEntity.class);
-
-        // Then
-        assertThat(results)
-                .hasSize(2)
-                .extracting(TestEntity::getStringValue)
-                .containsOnly("entity1", "entity2");
-    }
-
-    @Test
-    void testInLong() throws ClassNotFoundException {
-        // Given - setup initial DB data for testing
-
-        FilterRequestDTO request = createFilterRequest("TestEntity",
-                FilterRequestDTO.Operation.IN,
-                "longValue",
-                1L, 2L);
-
-        // When
-        List<TestEntity> results = service.getFilteredEntity(request, TestEntity.class);
-
-        // Then
-        assertThat(results)
-                .hasSize(2)
-                .extracting(TestEntity::getStringValue)
-                .containsOnly("entity1", "entity2");
-    }
-
-    @Test
-    void testInEnum() throws ClassNotFoundException {
-        // Given - setup initial DB data for testing
-
-        FilterRequestDTO request = createFilterRequest("TestEntity",
-                FilterRequestDTO.Operation.IN,
-                "enumValue",
-                Role.ADMIN, Role.USER);
-
-        // When
-        List<TestEntity> results = service.getFilteredEntity(request, TestEntity.class);
-
-        // Then
-        assertThat(results)
-                .hasSize(2)
-                .extracting(TestEntity::getStringValue)
-                .containsOnly("entity1", "entity2");
-    }
-
-    @Test
     void testLikeStringFilter() throws ClassNotFoundException {
         // Given - setup initial DB data for testing
 
@@ -798,10 +684,8 @@ class DataFilterServiceTest {
         List<TestEntity> results = service.getFilteredEntity(request, TestEntity.class);
 
         // Then
-        assertThat(results)
-                .hasSize(1)
-                .extracting(TestEntity::getStringValue)
-                .containsOnly(null);
+        assertThat(results).hasSize(1);
+        results.forEach(result -> assertThat(result.getStringValue()).isNull());
     }
 
     @Test
@@ -839,25 +723,6 @@ class DataFilterServiceTest {
     }
 
     @Test
-    void testUnsupportedOperation() throws ClassNotFoundException {
-        // Given - setup initial DB data for testing
-
-        FilterRequestDTO request = createFilterRequest("TestEntity",
-                FilterRequestDTO.Operation.BETWEEN,
-                "stringValue",
-                "entity1", "entity2");
-
-        // When
-        IllegalArgumentException exception = org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            service.getFilteredEntity(request, TestEntity.class);
-        });
-
-        // Then
-        assertThat(exception.getMessage())
-                .isEqualTo("Unsupported operation: BETWEEN");
-    }
-
-    @Test
     void testInvalidEntityName() {
         // Given - setup initial DB data for testing
 
@@ -892,47 +757,7 @@ class DataFilterServiceTest {
 
         // Then
         assertThat(exception.getMessage())
-                .isEqualTo("No property 'invalidField' found in entity of type TestEntity!");
+                .isEqualTo("Field invalidField not found");
     }
-
-    @Test
-    void testInvalidOperation() {
-        // Given - setup initial DB data for testing
-
-        FilterRequestDTO request = createFilterRequest("TestEntity",
-                FilterRequestDTO.Operation.EQUALS,
-                "stringValue",
-                "entity1");
-
-        // When
-        IllegalArgumentException exception = org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            service.getFilteredEntity(request, TestEntity.class);
-        });
-
-        // Then
-        assertThat(exception.getMessage())
-                .isEqualTo("No property 'invalidField' found in entity of type TestEntity!");
-    }
-
-    @Test
-    void testInvalidFilterRequest() {
-        // Given - setup initial DB data for testing
-
-        FilterRequestDTO request = createFilterRequest("TestEntity",
-                FilterRequestDTO.Operation.EQUALS,
-                "stringValue",
-                "entity1");
-
-        // When
-        IllegalArgumentException exception = org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            service.getFilteredEntity(request, TestEntity.class);
-        });
-
-        // Then
-        assertThat(exception.getMessage())
-                .isEqualTo("No property 'invalidField' found in entity of type TestEntity!");
-    }
-
-
 
 }

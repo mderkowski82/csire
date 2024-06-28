@@ -37,12 +37,20 @@ public class NotLikeSpecification<T> extends AbstractSpecification<T> {
         From from = getRoot(property, root);
         String field = getProperty(property);
         if (patterns.length == 1) {
-            return cb.like(from.get(field), patterns[0]).not();
+            return getPredicate(from, cb, patterns[0], field);
         }
         Predicate[] predicates = new Predicate[patterns.length];
         for (int i = 0; i < patterns.length; i++) {
             predicates[i] = cb.like(from.get(field), patterns[i]).not();
         }
         return cb.or(predicates);
+    }
+
+    private Predicate getPredicate(From root, CriteriaBuilder cb, Object value, String field) {
+        if(value == null) {
+            return cb.isNull(root.get(field));
+        } else {
+            return cb.or(cb.like(root.get(field), patterns[0]).not(), cb.isNull(root.get(field)));
+        }
     }
 }

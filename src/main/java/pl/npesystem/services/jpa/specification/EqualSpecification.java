@@ -50,7 +50,11 @@ public class EqualSpecification<T> extends AbstractSpecification<T> {
     }
 
     private Predicate getPredicate(From root, CriteriaBuilder cb, Object value, String field) {
-        return value == null ? cb.isNull(root.get(field)) : cb.equal(root.get(field), value);
+        if(value == null) {
+            return cb.isNull(root.get(field));
+        } else {
+            return cb.and(cb.equal(root.get(field), value), cb.isNotNull(root.get(field)));
+        }
     }
 }
 

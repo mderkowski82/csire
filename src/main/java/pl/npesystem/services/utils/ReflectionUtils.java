@@ -71,6 +71,7 @@ public class ReflectionUtils {
     private static FieldPropInfo toFieldPropInfo(Field field) {
         FieldProp fieldProp = field.getAnnotation(FieldProp.class);
         return new FieldPropInfo(
+                field.getName(),
                 fieldProp.position(),
                 fieldProp.label(),
                 fieldProp.renderer(),

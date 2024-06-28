@@ -19,7 +19,6 @@ public class FilterRequestDTO {
         @Nonnull private String fieldName;
         @Nonnull private Operation operation;
         @Nonnull private List<@Nonnull Object> values;
-        @Nonnull private String wildcard; // New addition
     }
 
     @Data
