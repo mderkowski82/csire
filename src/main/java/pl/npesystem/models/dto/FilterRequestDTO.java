@@ -40,6 +40,7 @@ public class FilterRequestDTO {
         NOT_NULL,
         LIKE,
         NOT_LIKE,
+        MEMBER
     }
 
     @Data

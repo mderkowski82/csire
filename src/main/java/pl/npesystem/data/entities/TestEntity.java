@@ -67,16 +67,27 @@ public class TestEntity extends AbstractEntity implements TableInterface {
     private Set<Role> enumValues = new LinkedHashSet<>();
 
     @ToString.Exclude
-    @OneToOne
-    @JoinColumn(name = "test_second_entity_id")
-    @FieldProp(position = 10, label="Entity", renderer = RendererType.Entity)
-    @JsonManagedReference
-    private TestSecondEntity testSecondEntity;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "one_to_one_id")
+    private TestSecondEntity oneToOne;
 
-    @OneToMany(mappedBy = "testEntity", orphanRemoval = true)
-    @FieldProp(position = 11, label="Set Entity", renderer = RendererType.Entities)
-    @JsonManagedReference
-    private Set<TestSecondEntity> testSecondEntities = new LinkedHashSet<>();
+    @ToString.Exclude
+    @OneToMany(mappedBy = "testEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TestSecondEntity> oneToMany = new LinkedHashSet<>();
+
+    @ToString.Exclude
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "many_to_one_id")
+    private TestSecondEntity manyToOne;
+
+    @ToString.Exclude
+    @ManyToMany
+    @JoinTable(name = "TEST_ENTITY_manyToMany",
+            joinColumns = @JoinColumn(name = "testEntity_id"),
+            inverseJoinColumns = @JoinColumn(name = "manyToMany_id"))
+    private Set<TestSecondEntity> manyToMany = new LinkedHashSet<>();
+
+
 
     @Override
     public final boolean equals(Object o) {

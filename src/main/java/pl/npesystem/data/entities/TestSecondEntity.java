@@ -18,8 +18,10 @@ import pl.npesystem.data.repositories.TestSecondEntityRepository;
 import pl.npesystem.services.records.ColumnProp;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "TEST_SECOND_ENTITY")
@@ -53,14 +55,16 @@ public class TestSecondEntity extends AbstractEntity implements TableInterface {
     @Enumerated(EnumType.STRING)
     private Role enumValue;
 
+    @OneToMany(mappedBy = "manyToOne", orphanRemoval = true)
+    private Set<TestEntity> testEntities = new LinkedHashSet<>();
+
     @ManyToOne
     @JoinColumn(name = "test_entity_id")
-    @JsonBackReference
     private TestEntity testEntity;
 
-    @OneToOne(mappedBy = "testSecondEntity", orphanRemoval = true)
-    @JsonBackReference
-    private TestEntity testEntity2;
+    @ManyToMany(mappedBy = "manyToMany")
+    private Set<TestEntity> testEntitiesManyToMany = new LinkedHashSet<>();
+
 
     @Override
     public final boolean equals(Object o) {

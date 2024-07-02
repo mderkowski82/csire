@@ -41,7 +41,7 @@ public class IsMember<T> extends AbstractSpecification<T> {
         List<Predicate> rolePredicates = new ArrayList<>();
         String field = getProperty(property);
         for (Object role : values) {
-            rolePredicates.add(cb.isMember(role, root.get(field)));
+           rolePredicates.add(cb.isMember(role, root.get(field)));
         }
         return cb.and(rolePredicates.toArray(Predicate[]::new));
 

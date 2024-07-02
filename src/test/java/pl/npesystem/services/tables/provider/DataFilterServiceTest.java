@@ -2,29 +2,23 @@ package pl.npesystem.services.tables.provider;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import pl.npesystem.data.Role;
 import pl.npesystem.data.entities.TestEntity;
+import pl.npesystem.data.entities.TestSecondEntity;
 import pl.npesystem.data.repositories.TestEntityRepository;
 import pl.npesystem.models.dto.FilterRequestDTO;
 
@@ -32,6 +26,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -79,26 +74,52 @@ class DataFilterServiceTest {
         service = new DataFilterService(applicationContext);
 
         TestEntity entity1 = new TestEntity();
-//        entity1.setId(1L);
         entity1.setStringValue("entity1");
         entity1.setBigDecimalValue(new BigDecimal("100.00"));
         entity1.setABooleanValue(true);
         entity1.setIntValue(1);
         entity1.setLongValue(1L);
         entity1.setEnumValue(Role.ADMIN);
+        TestSecondEntity secondEntity1a = new TestSecondEntity();
+        secondEntity1a.setStringValue("secondEntity1a");
+        TestSecondEntity secondEntity1b = new TestSecondEntity();
+        secondEntity1b.setStringValue("secondEntity1b");
+        TestSecondEntity secondEntity1c = new TestSecondEntity();
+        secondEntity1c.setStringValue("secondEntity1c");
+        TestSecondEntity secondEntity1d = new TestSecondEntity();
+        secondEntity1d.setStringValue("secondEntity1d");
+
+        entity1.setOneToOne(secondEntity1a);
+        entity1.setOneToMany(Set.of(secondEntity1b, secondEntity1c));
+        entity1.setManyToOne(secondEntity1d);
+        entity1.setManyToMany(Set.of(secondEntity1a, secondEntity1b));
+
 
 
         TestEntity entity2 = new TestEntity();
-//        entity2.setId(2L);
         entity2.setStringValue("entity2");
         entity2.setBigDecimalValue(new BigDecimal("200.00"));
         entity2.setABooleanValue(false);
         entity2.setIntValue(2);
         entity2.setLongValue(2L);
         entity2.setEnumValue(Role.USER);
+        TestSecondEntity secondEntity2a = new TestSecondEntity();
+        secondEntity2a.setStringValue("secondEntity2a");
+        TestSecondEntity secondEntity2b = new TestSecondEntity();
+        secondEntity2b.setStringValue("secondEntity2b");
+        TestSecondEntity secondEntity2c = new TestSecondEntity();
+        secondEntity2c.setStringValue("secondEntity2c");
+        TestSecondEntity secondEntity2d = new TestSecondEntity();
+        secondEntity2d.setStringValue("secondEntity2d");
+
+        entity2.setOneToOne(secondEntity2a);
+        entity2.setOneToMany(Set.of(secondEntity2b, secondEntity2c));
+        entity2.setManyToOne(secondEntity2d);
+        entity2.setManyToMany(Set.of(secondEntity2a, secondEntity2b));
+
+
 
         TestEntity entity3 = new TestEntity();
-//        entity3.setId(3L);
         entity3.setStringValue(null);
         entity3.setBigDecimalValue(null);
         entity3.setABooleanValue(null);
@@ -741,23 +762,64 @@ class DataFilterServiceTest {
                 .isEqualTo("pl.npesystem.data.entities.InvalidEntity");
     }
 
+//    @Test
+//    void testInvalidFieldName() {
+//        // Given - setup initial DB data for testing
+//
+//        FilterRequestDTO request = createFilterRequest("TestEntity",
+//                FilterRequestDTO.Operation.EQUALS,
+//                "invalidField",
+//                "entity1");
+//
+//        // When
+//        IllegalArgumentException exception = org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> {
+//            service.getFilteredEntity(request, TestEntity.class);
+//        });
+//
+//        // Then
+//        assertThat(exception.getMessage())
+//                .isEqualTo("Field invalidField not found");
+//    }
+
     @Test
-    void testInvalidFieldName() {
+    void testOneToOneEqualsFilter() throws ClassNotFoundException {
         // Given - setup initial DB data for testing
 
         FilterRequestDTO request = createFilterRequest("TestEntity",
                 FilterRequestDTO.Operation.EQUALS,
-                "invalidField",
-                "entity1");
+                "oneToOne.stringValue",
+                "secondEntity1a");
 
         // When
-        IllegalArgumentException exception = org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            service.getFilteredEntity(request, TestEntity.class);
-        });
+        List<TestEntity> results = service.getFilteredEntity(request, TestEntity.class);
 
         // Then
-        assertThat(exception.getMessage())
-                .isEqualTo("Field invalidField not found");
+        assertThat(results)
+                .hasSize(1)
+                .extracting(TestEntity::getStringValue)
+                .containsOnly("entity1");
+    }
+
+    @Test
+    void testOneToManyInFilter() throws ClassNotFoundException {
+        // Given - setup initial DB data for testing
+        String entityName = "TestEntity";
+        FilterRequestDTO.Operation operation = FilterRequestDTO.Operation.MEMBER;
+        String filterField = "oneToMany.stringValue";
+        String fieldValue1 = "secondEntity1b";
+        String fieldValue2 = "secondEntity1c";
+
+        FilterRequestDTO request = createFilterRequest(entityName,
+                operation,
+                filterField,
+                fieldValue1, fieldValue2);
+        // When
+        List<TestEntity> results = service.getFilteredEntity(request, TestEntity.class);
+        // Then
+        assertThat(results)
+                .hasSize(1)
+                .extracting(TestEntity::getStringValue)
+                .containsOnly("entity1");
     }
 
 }

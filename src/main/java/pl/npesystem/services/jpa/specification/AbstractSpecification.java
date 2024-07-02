@@ -21,6 +21,7 @@
  */
 package pl.npesystem.services.jpa.specification;
 
+import jakarta.persistence.criteria.Path;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
@@ -30,18 +31,32 @@ import jakarta.persistence.criteria.Root;
 import java.io.Serializable;
 
 abstract class AbstractSpecification<T> implements Specification<T>, Serializable {
+    public From getRoot(String property, Root<T> root) {
+        if (property.contains(".")) {
+            String[] properties = StringUtils.split(property, ".");
+            From join = root;
+            for (int i = 0; i < properties.length - 1; i++) {
+                join = join.join(properties[i], JoinType.LEFT);
+            }
+            return join;
+        }
+        return root;
+    }
+
     public String getProperty(String property) {
         if (property.contains(".")) {
-            return StringUtils.split(property, ".")[1];
+            String[] properties = StringUtils.split(property, ".");
+            return properties[properties.length - 1];
         }
         return property;
     }
 
-    public From getRoot(String property, Root<T> root) {
-        if (property.contains(".")) {
-            String joinProperty = StringUtils.split(property, ".")[0];
-            return root.join(joinProperty, JoinType.LEFT);
+    public Path<?> getNestedPath(Root<T> root, String property) {
+        String[] nestedProperties = property.split("\\.");
+        Path<?> path = root;
+        for (String nestedProperty : nestedProperties) {
+            path = path.get(nestedProperty);
         }
-        return root;
+        return path;
     }
 }

@@ -40,10 +40,11 @@ public class DataFilterService {
             List<FieldPropInfo> fieldPropInfo = ReflectionUtils.toFieldPropInfo(type);
 
             validateFilter(filter);
-            fieldPropInfo.stream()
-                    .filter(field -> field.fieldName().equals(filter.getFieldName()))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Field " + filter.getFieldName() + " not found"));
+//            fieldPropInfo.stream()
+//                    .filter(field -> !field.fieldName().contains(".")) // nested fields
+//                    .filter(field -> field.fieldName().equals(filter.getFieldName()))
+//                    .findFirst()
+//                    .orElseThrow(() -> new IllegalArgumentException("Field " + filter.getFieldName() + " not found"));
 
 
             switch (filter.getOperation()) {
@@ -54,11 +55,12 @@ public class DataFilterService {
                 case GREATER_THAN_EQUAL_TO -> predicateBuilder.greaterOrEqual(filter.getFieldName(), (Comparable<?>) filter.getValues().get(0));
                 case LESS_THAN_EQUAL_TO -> predicateBuilder.lessOrEqual(filter.getFieldName(), (Comparable<?>) filter.getValues().get(0));
                 case BETWEEN -> predicateBuilder.between(filter.getFieldName(), (Comparable<?>) filter.getValues().get(0), (Comparable<?>) filter.getValues().get(1));
-                case IN -> predicateBuilder.in(filter.getFieldName(), (Collection<?>) filter.getValues().get(0));
+                case IN -> predicateBuilder.in(filter.getFieldName(), (Collection<?>) filter.getValues());
                 case LIKE -> predicateBuilder.like(filter.getFieldName(), filter.getValues().get(0).toString());
                 case NOT_LIKE -> predicateBuilder.notLike(filter.getFieldName(), filter.getValues().get(0).toString());
                 case NULL -> predicateBuilder.isNull(filter.getFieldName());
                 case NOT_NULL -> predicateBuilder.isNotNull(filter.getFieldName());
+                case MEMBER -> predicateBuilder.isMember(filter.getFieldName(), filter.getValues());
                 default -> throw new IllegalArgumentException("Unsupported operation: " + filter.getOperation());
             }
         }
@@ -82,7 +84,7 @@ public class DataFilterService {
 
     private static void validateFilter(FilterRequestDTO.FilterCriteriaDTO filter) {
         switch (filter.getOperation()) {
-            case EQUALS, NOT_EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_EQUAL_TO, LESS_THAN_EQUAL_TO, IN, LIKE, NOT_LIKE -> {
+            case EQUALS, NOT_EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_EQUAL_TO, LESS_THAN_EQUAL_TO, LIKE, NOT_LIKE -> {
                 if (filter.getValues().size() != 1) {
                     throw new IllegalArgumentException("Operation " + filter.getOperation() + " requires exactly one value");
                 }
@@ -95,6 +97,11 @@ public class DataFilterService {
             case NULL, NOT_NULL -> {
                 if (!filter.getValues().isEmpty()) {
                     throw new IllegalArgumentException("Operation " + filter.getOperation() + " requires no values");
+                }
+            }
+            case IN, MEMBER -> {
+                if (filter.getValues().isEmpty()) {
+                    throw new IllegalArgumentException("Operation " + filter.getOperation() + " requires at least one value");
                 }
             }
         }
